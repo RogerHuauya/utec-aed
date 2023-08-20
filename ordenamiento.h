@@ -32,7 +32,11 @@ public:
         llenar();
     }
 
-    void quicksort(int l,int r){
+    void quicksort(){
+        quicksort(0,sz-1);
+    }
+    
+    void quicksort(int l, int r){
         if(l<r){
             int p = partition(l,r);
             quicksort(l,p-1);
