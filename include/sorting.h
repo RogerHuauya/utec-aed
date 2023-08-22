@@ -69,10 +69,57 @@ class MergeSort : public Sort<T>{
 private:
     using Sort<T>::sz;
     using Sort<T>::arr;
+    void merge(int i, int mid, int j){
+        int s1 = mid - i + 1, s2 = j - mid;
+
+        int right[s1];
+        int left[s2];
+
+        for(int a = 0; a < s1; a++){
+            left[a] = arr[a+i];
+        }
+
+        for(int a = 0; a < s2; a++){
+            right[a] = arr[a+1+mid];
+        }
+
+        int a = 0, b = 0, c = i;
+        while(a < s1 && b < s2){
+            if(left[a] <= right[b]){
+                arr[c] = left[a];
+                a++;
+            }else{
+                arr[c] = right[b];
+                b++;
+            }
+            c++;
+        }
+
+        while(a < s1){
+            arr[c] = left[a];
+            a++;
+            c++;
+        }
+
+        while(b < s2){
+            arr[c] = right[b];
+            b++;
+            c++;
+        }
+    }
 public:
     MergeSort(int n) : Sort<T>(n){}
     void sort(){
-        return;
+        sort(0, sz-1);
+    }
+
+    void sort(int i, int j) {
+        if (i < j) {
+            int mid = (i + j) / 2;
+            sort(i, mid);
+            sort(mid + 1, j);
+            merge(i, mid, j);
+        }
     }
 };
 
