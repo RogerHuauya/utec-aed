@@ -3,6 +3,7 @@
 #include <random>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 
 #define SEED 123456789
 
@@ -12,19 +13,31 @@ template <typename T>
 class Sort{
 protected:
     int sz;
-    T* arr;
+    T* arr = nullptr;
+    ofstream csv_file;
+    string filename;
+
+public:
     void random_population(){
-        mt19937 mt(SEED); 
-        // uniform_int_distribution<T> dist(1,100);
+        mt19937 mt(SEED);
+        if (arr != nullptr) delete arr;
+        arr = new T[sz];
         for(int i = 0;i < sz; i++)
             arr[i] = mt();
-        cout<<"20!\n";
     }
-public:
     Sort(int n){
         sz = n;
-        arr = new T[sz];
         random_population();
+    }
+    void create_csv(){
+        csv_file.open(filename);
+        csv_file << "n,tiempo\n";
+    }
+    void close_csv(){
+        csv_file.close();
+    }
+    void set_sz(int n){
+        sz = n;
     }
     virtual void sort() = 0;
     void benchmark(){
@@ -33,6 +46,10 @@ public:
         auto end = chrono::steady_clock::now();
         auto diff = end - start;
         std::cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;
+        csv_file << sz << "," << chrono::duration <double, milli> (diff).count() << "\n";
+    }
+    ~Sort(){
+        delete[] arr;
     }
 };
 
@@ -43,6 +60,7 @@ class QuickSort : public Sort<T>{
 private:
     using Sort<T>::sz;
     using Sort<T>::arr;
+    using Sort<T>::filename;
     int partition(int l, int r){
         int pivot = arr[l];
         int aux = r;
@@ -54,7 +72,9 @@ private:
         return aux;
     }
 public:
-    QuickSort(int n) : Sort<T>(n){}
+    QuickSort(int n) : Sort<T>(n){
+        this->filename = "QuickSort_results.csv";
+    }
     void sort(){
         sort(0,sz-1);
     }
@@ -111,7 +131,9 @@ private:
         }
     }
 public:
-    MergeSort(int n) : Sort<T>(n){}
+    MergeSort(int n) : Sort<T>(n){
+        this->filename = "MergeSort_results.csv";
+    }
     void sort(){
         sort(0, sz-1);
     }
@@ -132,7 +154,9 @@ private:
     using Sort<T>::sz;
     using Sort<T>::arr;
 public:
-    InsertionSort(int n) : Sort<T>(n){}
+    InsertionSort(int n) : Sort<T>(n){
+        this->filename = "InsertionSort_results.csv";
+    }
     void sort(){
         for (int i = 1; i < sz; i++){
             int j = i-1, cur = arr[i];

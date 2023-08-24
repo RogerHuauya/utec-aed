@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 from matplotlib import style
 import pandas as pd
-
+import numpy as np
 
 def plot(file_name, title):
     """
@@ -19,18 +19,29 @@ def plot(file_name, title):
 
 def main():
     sorting_algorithms = ["QuickSort",
-                          #"MergeSort",
+                          "MergeSort",
                           "InsertionSort",
                           ]
-    sorting_algorithms_files = ["QuickSort_times.csv",
-                                #"MergeSort_times.csv",
-                                "InsertionSort_times.csv",
+    sorting_algorithms_files = ["QuickSort_results.csv",
+                                "MergeSort_results.csv",
+                                "InsertionSort_results.csv",
                                 ]
 
     for (algorithm, file_name) in zip(sorting_algorithms,
                                       sorting_algorithms_files):
-        plot(file_name, algorithm)
+        plt.figure()
+        data = pd.read_csv("cmake-build-debug/" + file_name)
+        plt.style.use('ggplot')
+        plt.title(algorithm)
+        plt.xlabel("List Size")
+        plt.ylabel("Time")
+        x = np.log10(data["n"])
+        y = data["tiempo"]
+        plt.plot(x, y, label=algorithm)
+        plt.scatter(x, y, color='red', marker='o', label='Points')
+        plt.savefig(file_name[:-4] + ".png")
 
+    plt.show()
 
 if __name__ == "__main__":
     main()
