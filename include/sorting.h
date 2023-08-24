@@ -4,6 +4,8 @@
 #include <chrono>
 #include <iostream>
 
+#define SEED 123456789
+
 using namespace std;
 
 template <typename T>
@@ -12,10 +14,11 @@ protected:
     int sz;
     T* arr;
     void random_population(){
-        random_device rd;
-        uniform_int_distribution<T> dist(1,100);
+        mt19937 mt(SEED); 
+        // uniform_int_distribution<T> dist(1,100);
         for(int i = 0;i < sz; i++)
-            arr[i] = dist(rd);
+            arr[i] = mt();
+        cout<<"20!\n";
     }
 public:
     Sort(int n){
